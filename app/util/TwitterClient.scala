@@ -7,12 +7,12 @@ import play.api.Play.current
 object TwitterClient {
 
 println(System.getenv())
-println(current.configuration.entrySet)
+println(System.getProperties)
 
-  val appKey: String = current.configuration.getString("appKey").get
-  val appSecret: String = current.configuration.getString("appSecret").get
-  val accessToken: String = current.configuration.getString("accessToken").get
-  val accessTokenSecret: String = current.configuration.getString("accessTokenSecret").get
+  val appKey: String =  System.getenv("appKey")
+  val appSecret: String =  System.getenv("appSecret")
+  val accessToken: String =  System.getenv("accessToken")
+  val accessTokenSecret: String =  System.getenv("accessTokenSecret")
 
   lazy val instance = apply()
 
