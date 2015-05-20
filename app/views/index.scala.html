@@ -1,0 +1,65 @@
+@import play.api.mvc.RequestHeader
+
+@()( implicit request: RequestHeader)
+
+@main("Welcome to Play") {
+    <div id="tweetFilterApp" ng-app="tweetFilterApp" data-ws-url="@routes.Application.ws().webSocketURL()" class="container">
+        <div class="row" ng-controller="tweetFilterCtrl">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>Tweet Sampler</h2>
+                </div>
+
+                <br/>
+
+                <form ng-submit="filter()" class="form-inline">
+                    <div class="form-group" style="padding-left:15px;">
+                        <label for="filterText">Filter words</label>
+                        <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;">
+                    </div>
+                    <button ladda="hideTweets()" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
+                </form>
+
+                <br/>
+
+                <div class="alert" ng-show="currentFilter" ng-class="warningLevel()">
+                    <strong >Current Filter: </strong>'{{ currentFilter }}'<span ng-hide="hideTweets()"> - <strong>Hits: </strong>({{ tweetsLength() }})</span>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <table id="tweets" class="table table-fixed header-fixed" ng-hide="hideTweets()">
+                            <thead>
+                                <tr>
+                                    <th style="width:20%" >user</th>
+                                    <th style="width:80%" >tweet</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in tweets">
+                                    <td style="width:20%"><img ng-src="{{item.profileImageUrl}}" style="width:40px"></td>
+                                    <td style="width:80%"><span ng-bind-html="item.text | decorate:currentFilter"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <table id="stats" class="table table-fixed header-fixed" ng-hide="hideStats()">
+                            <thead>
+                                <tr>
+                                    <th style="width:80%">hashTag</th>
+                                    <th style="width:20%">count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in stats | orderBy:['-count', '-dateTime']" ng-if="$index < 10">
+                                    <td style="width:80%">{{item.word}}</td>
+                                    <td style="width:20%">{{item.count}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

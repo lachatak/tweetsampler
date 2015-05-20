@@ -1,0 +1,47 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>@title</title>
+        <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))'>
+        <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("ladda-themeless.min.css"))'>
+        <link rel='stylesheet' href='@routes.Assets.at("stylesheets/main.css")'>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("spin.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("tooltip.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("ladda.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("angular.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap-tpls.min.js"))'></script>
+        <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("angular-sanitize.min.js"))'></script>
+        <script type='text/javascript' src='@routes.Assets.at("javascripts/angular-ladda.min.js")'></script>
+        <script type='text/javascript' src='@routes.Assets.at("javascripts/main.js")'></script>
+
+    </head>
+    <body>
+        <div style="padding:10px">
+            @content
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <a href="https://www.playframework.com/">
+                    <img src='@routes.Assets.at("pics/play.png")' height="45">
+                </a>
+                <a href="http://akka.io">
+                    <img src='@routes.Assets.at("pics/akka.png")' height="60">
+                </a>
+                <a href="https://angularjs.org/">
+                    <img src='@routes.Assets.at("pics/angular.png")' height="60">
+                </a>
+                <a href="http://getbootstrap.com//">
+                    <img src='@routes.Assets.at("pics/bootstrap.png")' height="47">
+                </a>
+                <a href="https://twitter.com/lachata_k">
+                    <img src='@routes.Assets.at("pics/twittericon.png")' height="60">
+                </a>
+            </div>
+        </footer>
+    </body>
+</html>

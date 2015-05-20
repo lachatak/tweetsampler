@@ -1,0 +1,9 @@
+machine:
+  environment:
+      SBT_OPTS: "-XX:+CMSClassUnloadingEnabled -XX:PermSize=256M -XX:MaxPermSize=512M"
+
+deployment:
+  staging:
+    branch: master
+    heroku:
+      appname: tweetsampler
