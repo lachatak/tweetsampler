@@ -6,6 +6,9 @@ import play.api.Play.current
 
 object TwitterClient {
 
+println(System.getenv())
+println(current.configuration.entrySet)
+
   val appKey: String = current.configuration.getString("appKey").get
   val appSecret: String = current.configuration.getString("appSecret").get
   val accessToken: String = current.configuration.getString("accessToken").get
