@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/tweetsampler -Dhttp.port=${PORT} -DapplyEvolutions.default=true
+web: target/universal/stage/bin/tweetsampler -DappKey=${appKey} -DappSecret=${appSecret} -DaccessToken=${accessToken} -DaccessTokenSecret=${accessTokenSecret} -Dhttp.port=${PORT} -DapplyEvolutions.default=true

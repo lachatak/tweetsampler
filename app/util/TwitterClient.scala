@@ -8,6 +8,9 @@ object TwitterClient {
 
   val twitterConf = ConfigFactory.load("twitter.conf")
 
+  println(System.getenv())
+  println(twitterConf)
+
   val appKey: String = twitterConf.getString("appKey")
   val appSecret: String = twitterConf.getString("appSecret")
   val accessToken: String = twitterConf.getString("accessToken")
