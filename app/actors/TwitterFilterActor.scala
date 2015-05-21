@@ -13,7 +13,7 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
 
   implicit val timeout: Timeout = 5 second
 
-  val twitterClient = TwitterClient.instance
+  val twitterClient = TwitterClient()
   val hasTagStatisticsCalculatorActor = context.system.actorOf(HashTagStatisticsCalculatorActor.props(client))
 
   override def preStart(): Unit = {

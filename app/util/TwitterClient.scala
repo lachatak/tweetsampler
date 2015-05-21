@@ -1,17 +1,17 @@
 package util
 
+import com.typesafe.config.ConfigFactory
 import twitter4j.conf.ConfigurationBuilder
 import twitter4j.{TwitterStream, TwitterStreamFactory}
-import play.api.Play.current
 
 object TwitterClient {
 
-  val appKey: String =  System.getenv("appKey")
-  val appSecret: String =  System.getenv("appSecret")
-  val accessToken: String =  System.getenv("accessToken")
-  val accessTokenSecret: String =  System.getenv("accessTokenSecret")
+  val twitterConf = ConfigFactory.load("twitter.conf")
 
-  lazy val instance = apply()
+  val appKey: String = twitterConf.getString("appKey")
+  val appSecret: String = twitterConf.getString("appSecret")
+  val accessToken: String = twitterConf.getString("accessToken")
+  val accessTokenSecret: String = twitterConf.getString("accessTokenSecret")
 
   def apply(): TwitterStream = {
     val cb = new ConfigurationBuilder()
