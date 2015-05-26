@@ -12,12 +12,14 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
     $scope.currentFilter;
     $scope.ws;
     $scope.tweets = [];
-    $scope.stats = [];
+    $scope.hashTagStats = [];
+    $scope.filterStats = [];
 
     $scope.filter = function () {
         $scope.ws.send(JSON.stringify({filter: $scope.filterText}));
         $scope.tweets = [];
-        $scope.stats = [];
+        $scope.hashTagStats = [];
+        $scope.filterStats = [];
         $scope.currentFilter = $scope.filterText;
         $scope.filterText = "";
     };
@@ -34,7 +36,15 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
                     break;
                 case "stats":
                     $scope.$apply(function () {
-                        $scope.stats = message.stats;
+                        var stats = message.stats;
+                        console.log(stats)
+                        if (stats.wordOccurrencesType == "hashTag") {
+                            $scope.hashTagStats = stats.wordOccurrences;
+                        } else if (stats.wordOccurrencesType == "filter") {
+                            $scope.filterStats = stats.wordOccurrences;
+                        } else {
+                            console.log(message)
+                        }
                     });
                     break;
                 default:
@@ -49,7 +59,7 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
     };
 
     $scope.warningLevel = function () {
-        return $scope.hideTweets() ? "alert-warning": "alert-success";
+        return $scope.hideTweets() ? "alert-warning" : "alert-success";
     }
 
     $scope.hideTweets = function () {
@@ -61,7 +71,7 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
     };
 
     $scope.hideStats = function () {
-        return $scope.stats.length == 0;
+        return $scope.hashTagStats.length == 0 && $scope.filterStats.length == 0;
     }
 
     $scope.initSockets();

@@ -15,6 +15,7 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
 
   val twitterClient = TwitterClient()
   val hasTagStatisticsCalculatorActor = context.system.actorOf(HashTagStatisticsCalculatorActor.props(client))
+  val filterStatisticsCalculatorActor = context.system.actorOf(FilterStatisticsCalculatorActor.props(client))
 
   override def preStart(): Unit = {
     twitterClient.addListener(this)
@@ -24,9 +25,10 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
 
   override def receive = LoggingReceive {
     case Filter(array) =>
-      hasTagStatisticsCalculatorActor ? ClearStats
+      hasTagStatisticsCalculatorActor ? ClearStats()
+      filterStatisticsCalculatorActor ? ClearStats(array)
       twitterClient.cleanUp()
-      twitterClient.filter(new FilterQuery().track(array).language(Array("en")))
+      twitterClient.filter(new FilterQuery().track(array.toArray).language(Array("en")))
     case Terminated(_) =>
       log.info("Terminating...")
       twitterClient.cleanUp()
@@ -38,6 +40,7 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
     val tweet = Tweet(status.getId, status.getCreatedAt.getTime, status.getUser, status.getText)
     client ! tweet
     hasTagStatisticsCalculatorActor ! tweet
+    filterStatisticsCalculatorActor ! tweet
   }
 
   override def onStallWarning(stallWarning: StallWarning): Unit = {}

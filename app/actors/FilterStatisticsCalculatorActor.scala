@@ -6,10 +6,9 @@ import akka.event.LoggingReceive
 import org.joda.time.DateTime
 
 import scala.concurrent.duration._
-import scalaz.Monoid
 import scalaz.Scalaz._
 
-class HashTagStatisticsCalculatorActor(client: ActorRef) extends Actor with ActorLogging {
+class FilterStatisticsCalculatorActor(client: ActorRef) extends Actor with ActorLogging {
 
   import context.dispatcher
 
@@ -25,34 +24,34 @@ class HashTagStatisticsCalculatorActor(client: ActorRef) extends Actor with Acto
 
   override def receive: Receive = emptyBehavior
 
-  def receiveTweet(wordOccurrences: List[WordOccurrence] = List.empty): Receive = LoggingReceive {
+  def receiveTweet(wordOccurrences: List[WordOccurrence] = List.empty, filters: List[String] = List.empty): Receive = LoggingReceive {
     case Tweet(_, date, _, text) =>
       cancellable = setCancellable
-      val w = filterStats(addText(wordOccurrences, date, text))
+      val w = filterStats(addText(wordOccurrences, filters, date, text))
       client ! generateMessage(w)
-      context become (receiveTweet(w))
-    case ClearStats(_) =>
+      context become (receiveTweet(w, filters))
+    case ClearStats(filters) =>
       cancellable = None
-      context become (receiveTweet())
+      context become (receiveTweet(filters = filters))
       sender ! Cleared
     case SendStats =>
       cancellable = setCancellable
       val w = filterStats(wordOccurrences)
       client ! generateMessage(w)
-      context become (receiveTweet(w))
+      context become (receiveTweet(w, filters))
     case Terminated(_) =>
       log.info("Terminating...")
       cancellable.foreach(_.cancel)
       context.stop(self)
   }
 
-  def addText(wordOccurrences: List[WordOccurrence], date: Long, text: String) = wordOccurrences ::: text.replace(',', ' ').replace('\n', ' ').replaceAll("\\w#", "\\w #").split(" ").filter(_.startsWith("#")).map(i => WordOccurrence(i.trim, date)).toList
+  def addText(wordOccurrences: List[WordOccurrence], filters: List[String], date: Long, text: String) = wordOccurrences ::: filters.filter(f => text.toLowerCase.indexOf(f.trim.toLowerCase) > -1).map(i => WordOccurrence(i.trim, date)).toList
 
   def filterStats(wordOccurrences: List[WordOccurrence]) = wordOccurrences.filter(_.dateTime > DateTime.now().minusSeconds(windowInSec).getMillis)
 
   def generateMessage(wordOccurrences: List[WordOccurrence]) = {
     implicit val wordOccurrenceAsMonoid = new WordOccurrenceAsMonoid
-    WordOccurrences("hashTag", wordOccurrences.foldMap(_.toMap).values.toList)
+    WordOccurrences("filter", wordOccurrences.foldMap(_.toMap).values.toList)
   }
 
   private def setCancellable = {
@@ -61,26 +60,8 @@ class HashTagStatisticsCalculatorActor(client: ActorRef) extends Actor with Acto
   }
 }
 
-object HashTagStatisticsCalculatorActor {
-  def props(client: ActorRef) = Props(classOf[HashTagStatisticsCalculatorActor], client)
-}
-
-case class ClearStats(filters:List[String]= List.empty)
-
-case object Cleared
-
-case object SendStats
-
-case class WordOccurrences(wordOccurrencesType:String, wordOccurrences: List[WordOccurrence])
-
-case class WordOccurrence(word: String, dateTime: Long, count: Int = 1) {
-  val toMap = Map(word -> this)
-}
-
-class WordOccurrenceAsMonoid extends Monoid[WordOccurrence] {
-  override def zero = WordOccurrence("", 0, 0)
-
-  override def append(i1: WordOccurrence, i2: => WordOccurrence) = if (i1.dateTime > i2.dateTime) WordOccurrence(i1.word, i1.dateTime, i1.count + i2.count) else WordOccurrence(i1.word, i2.dateTime, i1.count + i2.count)
+object FilterStatisticsCalculatorActor {
+  def props(client: ActorRef) = Props(classOf[FilterStatisticsCalculatorActor], client)
 }
 
 
