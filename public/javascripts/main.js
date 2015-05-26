@@ -67,11 +67,15 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
     $scope.initSockets();
 });
 
-angular.module("tweetFilterApp.filters", ['ngSanitize']).filter("decorate", function ($sce) {
+angular.module("tweetFilterApp.filters", ['ngSanitize']).filter("highlight", function ($sce) {
     return function (input, currentFilter) {
         var words = input.split(" ");
         for (var i = 0; i < words.length; i++) {
             var filters = currentFilter.split(" ");
+            if (words[i].indexOf("#") > -1) {
+                words[i] = "<span style='color:darkgreen;font-weight:bold'>" + words[i] + "</span>";
+                continue;
+            }
             for (var j = 0; j < filters.length; j++) {
                 if (words[i].toLowerCase().indexOf(filters[j].toLowerCase()) > -1) {
                     words[i] = "<span style='color:red;font-weight:bold'>" + words[i] + "</span>";

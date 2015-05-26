@@ -12,12 +12,12 @@
 
                 <br/>
 
-                <form ng-submit="filter()" class="form-inline">
+                <form ng-submit="filter()" name="filterForm" class="form-inline" novalidate>
                     <div class="form-group" style="padding-left:15px;">
                         <label for="filterText">Filter words</label>
-                        <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;">
+                        <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;" required>
                     </div>
-                    <button ladda="hideTweets()" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
+                    <button ng-disabled="filterForm.$invalid" ladda="hideTweets()" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
                 </form>
 
                 <br/>
@@ -37,7 +37,7 @@
                             <tbody>
                                 <tr ng-repeat="item in tweets">
                                     <td style="width:20%"><img ng-src="{{item.profileImageUrl}}" style="width:40px"></td>
-                                    <td style="width:80%"><span ng-bind-html="item.text | decorate:currentFilter"></span></td>
+                                    <td style="width:80%"><span ng-bind-html="item.text | highlight:currentFilter"></span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -51,7 +51,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in stats | orderBy:['-count', '-dateTime']" ng-if="$index < 10">
+                                <tr ng-repeat="item in stats | orderBy:['-count', '-dateTime'] | limitTo:10">
                                     <td style="width:80%">{{item.word}}</td>
                                     <td style="width:20%">{{item.count}}</td>
                                 </tr>
