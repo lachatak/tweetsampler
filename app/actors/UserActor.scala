@@ -17,7 +17,7 @@ class UserActor(uid: String, out: ActorRef) extends Actor with ActorLogging {
 
   def receive = LoggingReceive {
     case js: JsValue => (js \ "filter").validate[String] map (f => twitterFilterActor ! Filter(f.split(" ").toList))
-    case Tweet(_, _, user, text) => out ! Json.obj("type" -> "tweet", "screenName" -> user.getScreenName, "profileImageUrl" -> user.getOriginalProfileImageURL, "text" -> text)
+    case Tweet(_, _, user, text) => out ! Json.obj("type" -> "tweet", "id" -> user.getId, "profileImageUrl" -> user.getOriginalProfileImageURL, "text" -> text)
     case w@WordOccurrences(_, _) => out ! Json.obj("type" -> "stats", "stats" -> w)
   }
 

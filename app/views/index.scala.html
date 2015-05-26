@@ -5,6 +5,20 @@
 @main("Welcome to Play") {
     <div id="tweetFilterApp" ng-app="tweetFilterApp" data-ws-url="@routes.Application.ws().webSocketURL()" class="container">
         <div class="row" ng-controller="tweetFilterCtrl">
+
+            <script type="text/ng-template" id="profile.html">
+                <div class="modal-header">
+                    <h3 class="modal-title">Details</h3>
+                </div>
+                <div class="modal-body">
+                    Selected: <b>{{ tweet }}</b>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" ng-click="ok()">OK</button>
+                    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                </div>
+            </script>
+
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h2>Tweet Sampler</h2>
@@ -27,7 +41,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-8">
-                        <table id="tweets" class="table table-fixed header-fixed" ng-hide="hideTweets()">
+                        <table id="tweets" class="table table-hover table-fixed header-fixed" ng-hide="hideTweets()">
                             <thead>
                                 <tr>
                                     <th style="width:20%" >user</th>
@@ -35,9 +49,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in tweets">
-                                    <td style="width:20%"><img ng-src="{{item.profileImageUrl}}" style="width:40px"></td>
-                                    <td style="width:80%"><span ng-bind-html="item.text | highlight:currentFilter"></span></td>
+                                <tr ng-repeat="tweet in tweets" ng-click="open(tweet.id);">
+                                    <td style="width:20%"><img ng-src="{{tweet.profileImageUrl}}" style="width:40px"></td>
+                                    <td style="width:80%"><span ng-bind-html="tweet.text | highlight:currentFilter"></span></td>
                                 </tr>
                             </tbody>
                         </table>
