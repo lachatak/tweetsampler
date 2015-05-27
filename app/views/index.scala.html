@@ -17,7 +17,7 @@
                         </div>
                         <div ng-hide="hideUser();">
                             <div class="col-md-6">
-                                <img ng-src="{{user.biggerProfileImageURL}}" style="width:200px" alt="{{user.screenName}}" class="img-thumbnail">
+                                <img ng-src="{{user.biggerProfileImageURL}}" style="width:230px" alt="{{user.screenName}}" class="img-thumbnail">
                             </div>
                             <div class="col-md-6">
                                 <table id="tweets" class="table">
@@ -73,7 +73,9 @@
                         <label for="filterText">Filter words</label>
                         <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;" ng-pattern="/^[\w|\s]+$/" required>
                     </div>
-                    <button ng-disabled="filterForm.$invalid" ladda="hideTweets();" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
+                    <div style="display: inline-block;" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">
+                        <button ng-disabled="filterForm.$invalid" ladda="hideTweets();" class="btn btn-primary ladda-button" type="submit">Filter</button>
+                    </div>
                 </form>
 
                 <br/>

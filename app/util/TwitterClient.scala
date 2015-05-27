@@ -19,6 +19,7 @@ object TwitterClient {
     .setOAuthConsumerSecret(appSecret)
     .setOAuthAccessToken(accessToken)
     .setOAuthAccessTokenSecret(accessTokenSecret)
+    .setHttpRetryIntervalSeconds(5000)
     .build()
 
   lazy val twitterStreamInstance: TwitterStream = {
