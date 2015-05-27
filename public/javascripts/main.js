@@ -7,7 +7,7 @@ angular.module("tweetFilterApp")
         });
     });
 
-angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", function ($scope, $modal, $timeout, $log) {
+angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", function ($scope, $modal, $http, $log) {
     $scope.filterText = "poker";
     $scope.currentFilter;
     $scope.ws;
@@ -43,12 +43,12 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
                         } else if (stats.wordOccurrencesType == "filter") {
                             $scope.filterStats = stats.wordOccurrences;
                         } else {
-                            console.log(message)
+                            $log.info(message)
                         }
                     });
                     break;
                 default:
-                    console.log(message)
+                    $log.info(message)
             }
         };
         $scope.ws.onopen = function () {
@@ -74,7 +74,7 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
         return $scope.hashTagStats.length == 0 && $scope.filterStats.length == 0;
     };
 
-    $scope.setSelected = function(item) {
+    $scope.setSelected = function (item) {
         $scope.selectedTweet = item;
     };
 
@@ -87,23 +87,24 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
             templateUrl: 'profile.html',
             controller: 'ModalInstanceCtrl',
             resolve: {
-                tweet: function () {
+                user: function () {
                     return userId + " loading...";
                 }
             }
         });
 
-        modalInstance.opened.then(function() {
+        modalInstance.opened.then(function () {
             $scope.loadData(modalInstance, userId);
-        }, function() {
+        }, function () {
             $log.info('Modal dismissed at: ' + new Date());
         });
     };
 
-    $scope.loadData = function(aModalInstance, userId) {
-        $timeout(function() {
-            aModalInstance.setTweet(userId + " loaded!!");
-        }, 3000);
+    $scope.loadData = function (aModalInstance, userId) {
+        $http.get(jsRoutes.controllers.Users.users(userId).absoluteURL()).
+            success(function (user) {
+                aModalInstance.setUser(user);
+            });
     };
 });
 
@@ -126,12 +127,12 @@ angular.module("tweetFilterApp.filters", ['ngSanitize']).filter("highlight", fun
     };
 });
 
-angular.module('tweetFilterApp.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, tweet) {
+angular.module('tweetFilterApp.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, user) {
 
-    $scope.tweet = tweet;
+    $scope.user = user;
 
-    $modalInstance.setTweet = function(tweet) {
-        $scope.tweet = tweet;
+    $modalInstance.setUser = function (user) {
+        $scope.user = user;
     };
 
     $scope.ok = function () {

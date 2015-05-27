@@ -2,7 +2,7 @@ package controllers
 
 import java.util.UUID
 
-import actors.{UserActor, UserAdministratorActor}
+import actors.UserActor
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json.JsValue
@@ -33,5 +33,4 @@ object Application extends Controller {
         case Some(uid) => Right(UserActor.props(uid))
       })
   }
-
 }
