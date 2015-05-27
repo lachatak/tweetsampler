@@ -8,14 +8,56 @@
 
             <script type="text/ng-template" id="profile.html">
                 <div class="modal-header">
-                    <h3 class="modal-title">Details</h3>
+                    <h3 class="modal-title">User Details</h3>
                 </div>
                 <div class="modal-body">
-                    Selected: <b>{{ user }}</b>
+                    <div class="row">
+                        <div ng-show="hideUser();" class="span12 text-center">
+                            <b>{{ loading }}</b>
+                        </div>
+                        <div ng-hide="hideUser();">
+                            <div class="col-md-6">
+                                <img ng-src="{{user.biggerProfileImageURL}}" style="width:200px" alt="{{user.screenName}}" class="img-thumbnail">
+                            </div>
+                            <div class="col-md-6">
+                                <table id="tweets" class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td style="width:50%">Id: </td>
+                                            <td style="width:50%"><b>{{user.id}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">ScreenName: </td>
+                                            <td style="width:50%"><b>{{user.screenName}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">Name: </td>
+                                            <td style="width:50%"><b>{{user.name}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">Friends: </td>
+                                            <td style="width:50%"><b>{{user.friendsCount}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">Followers: </td>
+                                            <td style="width:50%"><b>{{user.followersCount}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">Favourites: </td>
+                                            <td style="width:50%"><b>{{user.favouritesCount}}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:50%">Created: </td>
+                                            <td style="width:50%"><b>{{getCreatedAt() | date:"dd MMM yy HH:mm:ss"}}</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" ng-click="ok()">OK</button>
-                    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+                    <button class="btn btn-primary" ng-click="close();">Close</button>
                 </div>
             </script>
 
@@ -31,12 +73,12 @@
                         <label for="filterText">Filter words</label>
                         <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;" required>
                     </div>
-                    <button ng-disabled="filterForm.$invalid" ladda="hideTweets()" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
+                    <button ng-disabled="filterForm.$invalid" ladda="hideTweets();" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
                 </form>
 
                 <br/>
 
-                <div class="alert" ng-show="currentFilter" ng-class="warningLevel()">
+                <div class="alert" ng-show="currentFilter" ng-class="warningLevel();">
                     <strong >Current Filter: </strong>'{{ currentFilter }}'<span ng-hide="hideTweets()"> - <strong>Total hits: </strong>({{ tweetsLength() }})</span>
                 </div>
                 <div class="row">
@@ -57,7 +99,7 @@
                         </table>
                     </div>
                     <div class="col-md-4">
-                        <tabset justified="true" ng-hide="hideStats()">
+                        <tabset justified="true" ng-hide="hideStats();">
                             <tab heading="hashTag">
                                 <table id="hashTagStats" class="table table-fixed header-fixed">
                                     <thead>

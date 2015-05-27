@@ -1,26 +1,33 @@
 package util
 
 import com.typesafe.config.ConfigFactory
+import twitter4j._
 import twitter4j.conf.ConfigurationBuilder
-import twitter4j.{TwitterStream, TwitterStreamFactory}
 
 object TwitterClient {
 
-  val twitterConf = ConfigFactory.load("twitter.conf")
+  private val twitterConf = ConfigFactory.load("twitter.conf")
 
-  val appKey: String = twitterConf.getString("appKey")
-  val appSecret: String = twitterConf.getString("appSecret")
-  val accessToken: String = twitterConf.getString("accessToken")
-  val accessTokenSecret: String = twitterConf.getString("accessTokenSecret")
+  private val appKey: String = twitterConf.getString("appKey")
+  private val appSecret: String = twitterConf.getString("appSecret")
+  private val accessToken: String = twitterConf.getString("accessToken")
+  private val accessTokenSecret: String = twitterConf.getString("accessTokenSecret")
 
-  def apply(): TwitterStream = {
-    val cb = new ConfigurationBuilder()
-    cb.setDebugEnabled(true)
-      .setOAuthConsumerKey(appKey)
-      .setOAuthConsumerSecret(appSecret)
-      .setOAuthAccessToken(accessToken)
-      .setOAuthAccessTokenSecret(accessTokenSecret)
-    val tsf = new TwitterStreamFactory(cb.build())
+  private val configuration = new ConfigurationBuilder()
+    .setDebugEnabled(true)
+    .setOAuthConsumerKey(appKey)
+    .setOAuthConsumerSecret(appSecret)
+    .setOAuthAccessToken(accessToken)
+    .setOAuthAccessTokenSecret(accessTokenSecret)
+    .build()
+
+  lazy val twitterStreamInstance: TwitterStream = {
+    val tsf = new TwitterStreamFactory(configuration)
     tsf.getInstance()
+  }
+
+  lazy val twitterInstance: Twitter = {
+    val tf = new TwitterFactory(configuration)
+    tf.getInstance()
   }
 }
