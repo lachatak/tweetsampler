@@ -71,7 +71,7 @@
                 <form ng-submit="filter()" name="filterForm" class="form-inline" novalidate>
                     <div class="form-group" style="padding-left:15px;">
                         <label for="filterText">Filter words</label>
-                        <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;" required>
+                        <input type="text" class="form-control" id="filterText" ng-model="filterText" placeholder="filter text" autofocus style="width:400px;" ng-pattern="/^[\w|\s]+$/" required>
                     </div>
                     <button ng-disabled="filterForm.$invalid" ladda="hideTweets();" class="btn btn-primary ladda-button" type="submit" tooltip="Provide a space separated list of words to filter the Twitter stream!" tooltip-placement="right" tooltip-trigger="mouseenter">Filter</button>
                 </form>
