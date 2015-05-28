@@ -14,7 +14,6 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
     $scope.tweets = [];
     $scope.hashTagStats = [];
     $scope.filterStats = [];
-    $scope.selectedTweet;
 
     $scope.filter = function () {
         $scope.ws.send(JSON.stringify({filter: $scope.filterText}));
@@ -72,10 +71,6 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
 
     $scope.hideStats = function () {
         return $scope.hashTagStats.length == 0 && $scope.filterStats.length == 0;
-    };
-
-    $scope.setSelected = function (item) {
-        $scope.selectedTweet = item;
     };
 
     $scope.initSockets();
