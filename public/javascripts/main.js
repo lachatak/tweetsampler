@@ -82,8 +82,8 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
             templateUrl: 'profile.html',
             controller: 'ModalInstanceCtrl',
             resolve: {
-                loading: function () {
-                    return userId + " profile is loading...";
+                userId: function () {
+                    return userId;
                 }
             }
         });
@@ -122,9 +122,9 @@ angular.module("tweetFilterApp.filters", ['ngSanitize']).filter("highlight", fun
     };
 });
 
-angular.module('tweetFilterApp.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, loading) {
+angular.module('tweetFilterApp.controllers').controller('ModalInstanceCtrl', function ($scope, $modalInstance, userId) {
 
-    $scope.loading = loading;
+    $scope.userId = userId;
     $scope.user = {};
 
     $modalInstance.setUser = function (user) {
