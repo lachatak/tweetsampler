@@ -14,8 +14,8 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
   implicit val timeout: Timeout = 5 second
 
   val twitterStreamInstance = TwitterClient.twitterStreamInstance
-  val hasTagStatisticsCalculatorActor = context.system.actorOf(HashTagStatisticsCalculatorActor.props(client))
-  val filterStatisticsCalculatorActor = context.system.actorOf(FilterStatisticsCalculatorActor.props(client))
+  val hashTagStatisticsCalculatorActor = context.system.actorOf(StatisticsCalculatorActor.props(client, (filters: List[String], text: String) => text.replace(',', ' ').replace('\n', ' ').replaceAll("\\w#", "\\w #").split(" ").filter(_.startsWith("#")).toList, "hashTag"))
+  val filterStatisticsCalculatorActor = context.system.actorOf(StatisticsCalculatorActor.props(client, (filters: List[String], text: String) => filters.filter(f => text.toLowerCase.indexOf(f.trim.toLowerCase) > -1), "filter"))
 
   override def preStart(): Unit = {
     twitterStreamInstance.addListener(this)
@@ -25,7 +25,7 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
 
   override def receive = LoggingReceive {
     case Filter(array) =>
-      hasTagStatisticsCalculatorActor ? ClearStats()
+      hashTagStatisticsCalculatorActor ? ClearStats()
       filterStatisticsCalculatorActor ? ClearStats(array)
       twitterStreamInstance.cleanUp()
       twitterStreamInstance.filter(new FilterQuery().track(array.toArray).language(Array("en")))
@@ -39,7 +39,7 @@ class TwitterFilterActor(client: ActorRef) extends Actor with ActorLogging with 
   override def onStatus(status: Status): Unit = {
     val tweet = Tweet(status.getId, status.getCreatedAt.getTime, status.getUser, status.getText)
     client ! tweet
-    hasTagStatisticsCalculatorActor ! tweet
+    hashTagStatisticsCalculatorActor ! tweet
     filterStatisticsCalculatorActor ! tweet
   }
 

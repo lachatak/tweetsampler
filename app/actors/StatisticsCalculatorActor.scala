@@ -9,14 +9,13 @@ import scala.concurrent.duration._
 import scalaz.Monoid
 import scalaz.Scalaz._
 
-abstract class StatisticsCalculatorActor(client: ActorRef) extends Actor with ActorLogging {
+class StatisticsCalculatorActor(client: ActorRef, extractor: (List[String], String) => List[String], statType: String) extends Actor with ActorLogging {
 
   import context.dispatcher
 
   val windowInSec = 60
   var scheduleTime = 10 seconds
   var cancellable: Option[Cancellable] = None
-  val statType: String
 
   override def preStart(): Unit = {
     context become (receiveTweet())
@@ -29,7 +28,7 @@ abstract class StatisticsCalculatorActor(client: ActorRef) extends Actor with Ac
   def receiveTweet(wordOccurrences: List[WordOccurrence] = List.empty, filters: List[String] = List.empty): Receive = LoggingReceive {
     case Tweet(_, date, _, text) =>
       cancellable = setCancellable
-      val words = filterStats(addText(wordOccurrences, filters, date, text))
+      val words = filterStats(addOccurrences(wordOccurrences, extractor(filters, text), date))
       client ! generateMessage(words)
       context become (receiveTweet(words, filters))
     case ClearStats(filters) =>
@@ -47,7 +46,7 @@ abstract class StatisticsCalculatorActor(client: ActorRef) extends Actor with Ac
       context.stop(self)
   }
 
-  def addText(wordOccurrences: List[WordOccurrence], filters: List[String], date: Long, text: String): List[WordOccurrence]
+  def addOccurrences(wordOccurrences: List[WordOccurrence], extracted: List[String], createdAt: Long) = wordOccurrences ::: extracted.map(i => WordOccurrence(i.trim, createdAt)).toList
 
   def filterStats(wordOccurrences: List[WordOccurrence]) = wordOccurrences.filter(_.dateTime > DateTime.now().minusSeconds(windowInSec).getMillis)
 
@@ -79,3 +78,36 @@ class WordOccurrenceAsMonoid extends Monoid[WordOccurrence] {
 
   override def append(i1: WordOccurrence, i2: => WordOccurrence) = if (i1.dateTime > i2.dateTime) WordOccurrence(i1.word, i1.dateTime, i1.count + i2.count) else WordOccurrence(i1.word, i2.dateTime, i1.count + i2.count)
 }
+
+object StatisticsCalculatorActor {
+  def props(client: ActorRef, extractor: (List[String], String) => List[String], statType: String) = Props(classOf[StatisticsCalculatorActor], client, extractor, statType)
+}
+
+//object Test extends App {
+//
+//  case class ItemSummary(text: String, dateTime: DateTime, count: Int = 1) {
+//    val toMap = Map(text -> this)
+//  }
+//
+//  implicit val ItemSummaryAsMonoid = new Monoid[ItemSummary] {
+//    override def zero = ItemSummary("", new DateTime(0), 0)
+//
+//    override def append(i1: ItemSummary, i2: => ItemSummary) = if (i1.dateTime.isAfter(i2.dateTime)) ItemSummary(i1.text, i1.dateTime, i1.count + i2.count) else ItemSummary(i1.text, i2.dateTime, i1.count + i2.count)
+//  }
+//
+////  val text = "#Dogging,#Blowjob,#Public,#FootWorship,#Virgin,#Cum #Test Swallow: Buxom Black Sweetie In Stockings Gets Doggy Fucked http://t.co/wbaMXxIKAD"
+//      val text = " Buxom#Black Sweetie In Stockings Gets Doggy Fucked http://t.co/wbaMXxIKAD"
+//
+//  val date = DateTime.now
+//  var wordCountItems: List[ItemSummary] = List(ItemSummary("#Test", date.plusMinutes(1)))
+//  val tweet = Tweet(600408686117449728L, date.getMillis, null, text)
+//
+//  println(wordCountItems)
+//  wordCountItems = wordCountItems ::: tweet.text.replace(',', ' ').replace('\n', ' ').replaceAll("\\w#", "\\w #").split(" ").filter(_.startsWith("#")).map(i => ItemSummary(i.trim, date)).toList
+//  println(wordCountItems)
+//
+//  wordCountItems = wordCountItems.filter(_.dateTime.isAfter(DateTime.now().minusSeconds(60)))
+//  println(wordCountItems)
+//
+//  println(wordCountItems.foldMap(_.toMap).values)
+//}
