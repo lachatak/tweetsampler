@@ -1,7 +1,6 @@
 package controllers
 
 import actors.UserProfileActor
-import akka.actor.Props
 import akka.pattern.ask
 import akka.util.Timeout
 import play.api.libs.json.{DefaultWrites, Json, Writes}
@@ -16,7 +15,7 @@ import scala.concurrent.duration._
 object Users extends Controller {
 
   implicit val timeout: Timeout = 5 second
-  val userProfileActor = Akka.system().actorOf(Props[UserProfileActor])
+  val userProfileActor = Akka.system().actorOf(UserProfileActor.props())
 
   implicit object UserWriter extends Writes[User] with DefaultWrites {
     def writes(user: User) = Json.obj(

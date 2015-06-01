@@ -2,12 +2,12 @@ package actors
 
 import akka.actor._
 import akka.event.LoggingReceive
+import twitter4j.Twitter
 import util.TwitterClient
+
 import scala.collection.JavaConversions._
 
-class UserProfileActor extends Actor with ActorLogging {
-
-  val twitterInstance = TwitterClient.twitterInstance
+class UserProfileActor(twitterInstance: Twitter) extends Actor with ActorLogging {
 
   def receive: Receive = LoggingReceive {
     case id: Long => sender ! twitterInstance.lookupUsers(Array(id)).toList.head
@@ -16,7 +16,7 @@ class UserProfileActor extends Actor with ActorLogging {
 }
 
 object UserProfileActor {
-  def props = Props(classOf[UserProfileActor])
+  def props(twitterInstance: Twitter = TwitterClient.twitterInstance) = Props(classOf[UserProfileActor], twitterInstance)
 }
 
 

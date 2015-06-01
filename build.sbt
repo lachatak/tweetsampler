@@ -29,7 +29,10 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= Seq(
   "org.specs2" %% "specs2-core" % "3.4" % "test",
   "org.specs2" %% "specs2-mock" % "3.4" % "test",
-  "org.specs2" %% "specs2-junit" % "3.4" % "test"
+  "org.specs2" %% "specs2-junit" % "3.4" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test",
+  "com.typesafe.akka" %% "akka-testkit" % "2.3.4" % "test",
+  "org.mockito" % "mockito-core" % "1.9.5" % "test"
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
