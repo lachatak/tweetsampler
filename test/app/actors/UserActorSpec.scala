@@ -2,7 +2,7 @@ package app.actors
 
 import actors.{Filter, UserActor}
 import akka.actor.{ActorRef, ActorRefFactory, ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import akka.testkit.{TestActorRef, ImplicitSender, TestKit, TestProbe}
 import app.actors.Fixtures._
 import org.joda.time.DateTime
 import org.mockito.Mockito
@@ -58,7 +58,7 @@ with ImplicitSender {
     val ourProbe = TestProbe()
     val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => twitterFilterActorProbe.ref
     val twitterStream = Mockito.mock(classOf[TwitterStream])
-    val userActor = system.actorOf(UserActor.props("uid", actorFactory, twitterStream)(ourProbe.ref))
+    val userActor = TestActorRef(new UserActor("uid", actorFactory, twitterStream, ourProbe.ref))
   }
 
 }

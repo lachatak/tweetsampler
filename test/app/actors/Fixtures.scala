@@ -14,12 +14,14 @@ object Fixtures {
 
   val validFilterList = List("test", "test2")
   val validFilterMessage = Filter(validFilterList)
+  val validTweetId = 1L
+  val validTweetText = "text"
 
   def validWordOccurrence(word: String = "word", date: Long = DateTime.now().getMillis, count: Int = 1) = WordOccurrence(word, date, count)
 
   def validWordOccurrences(statType: String = "test", words: List[WordOccurrence] = List(validWordOccurrence())) = WordOccurrences(statType, words)
 
-  def validTweet(date: Long = DateTime.now().getMillis, tweet: String = "tweet") = Tweet(1, date, new StubUser(), tweet)
+  def validTweet(id: Long = validTweetId, date: Long = DateTime.now().getMillis, user: User = new StubUser(), tweet: String = "tweet") = Tweet(id, date, user, tweet)
 
   class StubUser extends User {
 

@@ -6,7 +6,7 @@ import twitter4j.conf.ConfigurationBuilder
 
 object TwitterClient {
 
-  private val twitterConf = ConfigFactory.load("twitter2.conf")
+  private val twitterConf = ConfigFactory.load("twitter.conf")
 
   private val appKey: String = twitterConf.getString("appKey")
   private val appSecret: String = twitterConf.getString("appSecret")

@@ -2,7 +2,7 @@ package app.actors
 
 import actors.UserProfileActor
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestKit}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import akka.util.Timeout
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
@@ -45,7 +45,7 @@ with ImplicitSender {
     when(responseList.get(0)).thenReturn(user)
     when(twitterInstance.lookupUsers(Array(10L))).thenReturn(responseList)
 
-    val userProfileActor = system.actorOf(UserProfileActor.props(twitterInstance))
+    val userProfileActor = TestActorRef(new UserProfileActor(twitterInstance))
   }
 
 }

@@ -2,9 +2,10 @@ package app.actors
 
 import actors.{ClearStats, TwitterFilterActor}
 import akka.actor._
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import akka.util.Timeout
 import app.actors.Fixtures._
+import org.joda.time.DateTime
 import org.mockito.Matchers._
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
@@ -19,7 +20,7 @@ with BeforeAndAfterAll
 with ImplicitSender {
 
   override def afterAll() {
-    system.shutdown()
+    shutdown()
   }
 
   "TwitterFilterActorSpec" should {
@@ -31,18 +32,39 @@ with ImplicitSender {
       statisticsCalculatorActor.expectMsg(ClearStats())
       statisticsCalculatorActor.expectMsg(ClearStats(validFilterList))
 
+      verify(twitterStreamInstance).addListener(any(classOf[StatusListener]))
       verify(twitterStreamInstance).cleanUp()
       verify(twitterStreamInstance).filter(new FilterQuery().track(validFilterList.toArray).language(Array("en")))
     }
 
+    "stop the twitter client if Terminated message arrives" in new scope {
 
-    "stp the twitter client if Terminated message arrives" in new scope {
-
+      watch(twitterFilterActor)
       client.ref ! PoisonPill
 
       verify(twitterStreamInstance).addListener(any(classOf[StatusListener]))
       verify(twitterStreamInstance).cleanUp()
       verify(twitterStreamInstance).shutdown()
+
+      expectTerminated(twitterFilterActor)
+    }
+
+    "deliver status to statistics calculators and the client" in new scope {
+
+      val date = DateTime.now
+      val status = mock(classOf[Status])
+      val user = new StubUser
+
+      when(status.getId).thenReturn(validTweetId)
+      when(status.getCreatedAt).thenReturn(date.toDate)
+      when(status.getUser).thenReturn(user)
+      when(status.getText).thenReturn(validTweetText)
+      twitterFilterActor.underlyingActor.onStatus(status)
+
+      val tweet = validTweet(validTweetId, date.getMillis, user, validTweetText)
+      client.expectMsg(tweet)
+      statisticsCalculatorActor.expectMsg(tweet)
+      statisticsCalculatorActor.expectMsg(tweet)
     }
   }
 
@@ -54,7 +76,7 @@ with ImplicitSender {
     val twitterStreamInstance = mock(classOf[TwitterStream])
 
     val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => statisticsCalculatorActor.ref
-    val twitterFilterActor = system.actorOf(TwitterFilterActor.props(client.ref, twitterStreamInstance, actorFactory))
+    val twitterFilterActor = TestActorRef(new TwitterFilterActor(client.ref, twitterStreamInstance, actorFactory))
   }
 
 }

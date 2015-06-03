@@ -34,7 +34,6 @@ class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStream,
       context.stop(self)
   }
 
-  //TODO test this function
   override def onStatus(status: Status): Unit = {
     val tweet = Tweet(status.getId, status.getCreatedAt.getTime, status.getUser, status.getText)
     client ! tweet
