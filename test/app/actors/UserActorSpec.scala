@@ -5,9 +5,11 @@ import akka.actor.{ActorRef, ActorRefFactory, ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import app.actors.Fixtures._
 import org.joda.time.DateTime
+import org.mockito.Mockito
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
 import play.api.libs.json.Json
 import play.api.libs.json.Json._
+import twitter4j.TwitterStream
 
 class UserActorSpec extends TestKit(ActorSystem("UserActorSpec"))
 with WordSpecLike
@@ -55,7 +57,8 @@ with ImplicitSender {
     val twitterFilterActorProbe = TestProbe()
     val ourProbe = TestProbe()
     val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => twitterFilterActorProbe.ref
-    val userActor = system.actorOf(UserActor.props("uid", actorFactory)(ourProbe.ref))
+    val twitterStream = Mockito.mock(classOf[TwitterStream])
+    val userActor = system.actorOf(UserActor.props("uid", actorFactory, twitterStream)(ourProbe.ref))
   }
 
 }

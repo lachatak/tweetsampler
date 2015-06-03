@@ -1,6 +1,5 @@
 package actors
 
-import _root_.util.TwitterClient
 import akka.actor._
 import akka.event.LoggingReceive
 import akka.pattern.ask
@@ -58,5 +57,5 @@ class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStream,
 }
 
 object TwitterFilterActor {
-  def props(client: ActorRef, twitterStreamInstance: TwitterStream = TwitterClient.twitterStreamInstance, actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => actorRefFactory.actorOf(props)) = Props(classOf[TwitterFilterActor], client, twitterStreamInstance, actorFactory)
+  def props(client: ActorRef, twitterStreamInstance: TwitterStream, actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => actorRefFactory.actorOf(props)) = Props(classOf[TwitterFilterActor], client, twitterStreamInstance, actorFactory)
 }

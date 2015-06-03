@@ -20,20 +20,21 @@ with ImplicitSender {
 
   "StatisticsCalculatorActor" should {
 
-    "send filter list to twitter actor if valid JsValue arrives" in new scope {
-
-      userActor ! validFilterJsonMessage
-
-      twitterFilterActorProbe.expectMsg(Filter(List("test", "test2")))
-    }
+//    "send filter list to twitter actor if valid JsValue arrives" in new scope {
+//
+//      userActor ! validFilterJsonMessage
+//
+//      twitterFilterActorProbe.expectMsg(Filter(List("test", "test2")))
+//    }
 
   }
 
-  private trait scope {
-    val twitterFilterActorProbe = TestProbe()
-    val ourProbe = TestProbe()
-    val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => twitterFilterActorProbe.ref
-    val userActor = system.actorOf(UserActor.props("uid", actorFactory)(ourProbe.ref))
-  }
+//  private trait scope {
+//    val twitterFilterActorProbe = TestProbe()
+//    val ourProbe = TestProbe()
+//    val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => twitterFilterActorProbe.ref
+//    val twitter
+//    val userActor = system.actorOf(UserActor.props("uid", actorFactory)(ourProbe.ref))
+//  }
 
 }

@@ -7,12 +7,14 @@ import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, Controller, WebSocket}
+import util.TwitterClient
 
 import scala.concurrent.Future
 
 object Application extends Controller {
 
   val UID = "uid"
+  val twitterStreamInstance = TwitterClient.twitterStreamInstance
 
   def index = Action {
     implicit request => {
@@ -30,7 +32,7 @@ object Application extends Controller {
     implicit request =>
       Future.successful(request.session.get(UID) match {
         case None => Left(Forbidden)
-        case Some(uid) => Right(UserActor.props(uid=uid))
+        case Some(uid) => Right(UserActor.props(uid = uid, twitterStreamInstance = twitterStreamInstance))
       })
   }
 }

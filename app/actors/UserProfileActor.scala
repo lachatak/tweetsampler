@@ -3,7 +3,6 @@ package actors
 import akka.actor._
 import akka.event.LoggingReceive
 import twitter4j.Twitter
-import util.TwitterClient
 
 import scala.collection.JavaConversions._
 
@@ -16,7 +15,7 @@ class UserProfileActor(twitterInstance: Twitter) extends Actor with ActorLogging
 }
 
 object UserProfileActor {
-  def props(twitterInstance: Twitter = TwitterClient.twitterInstance) = Props(classOf[UserProfileActor], twitterInstance)
+  def props(twitterInstance: Twitter) = Props(classOf[UserProfileActor], twitterInstance)
 }
 
 
