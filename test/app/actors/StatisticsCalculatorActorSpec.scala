@@ -1,13 +1,10 @@
 package app.actors
 
-import actors.{Filter, UserActor}
-import akka.actor.{ActorRef, ActorRefFactory, ActorSystem, Props}
-import akka.testkit.{ImplicitSender, TestKit, TestProbe}
+import actors.{Filter, StatisticsCalculatorActor}
+import akka.actor.ActorSystem
+import akka.testkit._
 import app.actors.Fixtures._
-import org.joda.time.DateTime
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike}
-import play.api.libs.json.Json
-import play.api.libs.json.Json._
 
 class StatisticsCalculatorActorSpec extends TestKit(ActorSystem("StatisticsCalculatorActor"))
 with WordSpecLike
@@ -22,19 +19,16 @@ with ImplicitSender {
 
 //    "send filter list to twitter actor if valid JsValue arrives" in new scope {
 //
-//      userActor ! validFilterJsonMessage
+//      statisticsActor ! validTweet()
 //
-//      twitterFilterActorProbe.expectMsg(Filter(List("test", "test2")))
+//      client.expectMsg(Filter(List("test", "test2")))
 //    }
 
   }
 
-//  private trait scope {
-//    val twitterFilterActorProbe = TestProbe()
-//    val ourProbe = TestProbe()
-//    val actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => twitterFilterActorProbe.ref
-//    val twitter
-//    val userActor = system.actorOf(UserActor.props("uid", actorFactory)(ourProbe.ref))
-//  }
+  private trait scope {
+    val client = TestProbe()
+    val statisticsActor = TestActorRef(new StatisticsCalculatorActor(client.ref, (filters: List[String], text: String) => filters.filter(f => text.toLowerCase.indexOf(f.trim.toLowerCase) > -1), "filter"))
+  }
 
 }
