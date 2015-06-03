@@ -1,7 +1,7 @@
 # Tweet Sampler [![Circle CI](https://circleci.com/gh/lachatak/tweetsampler/tree/master.svg?style=svg)](https://circleci.com/gh/lachatak/tweetsampler/tree/master) [![Coverage Status](https://coveralls.io/repos/lachatak/tweetsampler/badge.svg?branch=master)](https://coveralls.io/r/lachatak/tweetsampler?branch=master)
 
 This project is part of the Dev Challenges series organised for Gamesys developers.
-THe description can be found [here](CHALLENGE.md)
+The description can be found [here](CHALLENGE.md)
 
 ### Tool set ###
 - [Play](https://www.playframework.com/) to host the tweet application
@@ -22,7 +22,7 @@ The running application is available [here](http://tweetsampler.herokuapp.com/)
 2. Play delegates the call to the **Index controller**. It gives back the index page
 3. When the index page is initialised a **websocket channel** will be opened
 4. The call goes to the **Index controller** which creates a new **UserActor** for the session. It will be responsible for accepting user messages, converting those messages and forwarding to processor actors
-5. The **UserActor(( initialises a **TwitterFilterActor** for the session. It will be responsible for handling twitter streams and delegeting new tweets for further procession to statistics calculator actors
+5. The **UserActor** initialises a **TwitterFilterActor** for the session. It will be responsible for handling twitter streams and delegeting new tweets for further procession to statistics calculator actors
 6. Two statistics calculator actors are initialised. One for the **hashTag calculations** and one for the **filter statictics**
 7. User sends filter words he is interested in
 8. Play immediately delegates the request to the proper actor based on the session
