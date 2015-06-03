@@ -11,7 +11,7 @@ import util.TwitterClient
 
 import scala.concurrent.Future
 
-object Application extends Controller {
+object Index extends Controller {
 
   val UID = "uid"
   val twitterStreamInstance = TwitterClient.twitterStreamInstance

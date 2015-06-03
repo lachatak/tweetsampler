@@ -2,8 +2,8 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET        /                     controllers.Application.index
-GET        /ws                   controllers.Application.ws
+GET        /                     controllers.Index.index
+GET        /ws                   controllers.Index.ws
 
 GET        /users/:id            controllers.Users.users(id:Long)
 

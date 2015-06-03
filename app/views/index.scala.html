@@ -3,7 +3,7 @@
 @()( implicit request: RequestHeader)
 
 @main("Welcome to Play") {
-    <div id="tweetFilterApp" ng-app="tweetFilterApp" data-ws-url="@routes.Application.ws().webSocketURL()" class="container">
+    <div id="tweetFilterApp" ng-app="tweetFilterApp" data-ws-url="@routes.Index.ws().webSocketURL()" class="container">
         <div class="row" ng-controller="tweetFilterCtrl">
 
             <script type="text/ng-template" id="profile.html">
