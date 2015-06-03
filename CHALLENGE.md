@@ -36,7 +36,7 @@ Display hashTags within a moving time frame. It means that the UI should show th
 ```
 
 ### Mockup ###
-![Alt text](TweetSampler.jpg?raw=true "Mockup")
+![Alt text](pics/TweetSamplerWire.jpg?raw=true "Mockup")
 
 ### Delivery ###
 As it should be a **running web application** I would recommend to pick a cloud provider where you could potentially **deploy your application** for DEMO purpose. The organisers definitelly don't want to run 100 different type of web applications locally. ;) It can be AWS, Heroku or any other cloud provider what you prefer.
