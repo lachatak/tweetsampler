@@ -10,6 +10,7 @@ THe description can be found [here](CHALLENGE.md)
 - [Bootstrap](http://getbootstrap.com/) to speed up ergonomical UI development
 - [Heroku](https://www.heroku.com/) to be able to run our app in the cloud
 - [Twitter](https://twitter.com/lachata_k) to collect business information and follow technologial trends
+- [CircleCI](https://circleci.com/) to build and deploy the application
 
 The running application is available [here](http://tweetsampler.herokuapp.com/)
 
@@ -37,3 +38,12 @@ The running application is available [here](http://tweetsampler.herokuapp.com/)
 18. Response is **processed fromt twitter client and pushed to the UI**
 19. UI shows the detailed user profile
 
+## Continous delivery ##
+When code change happens in the github repository it is automatically picked up by CircleCI. It runs all the tests and based on the outcome deployes the application to Heroku
+
+## Screen shots ##
+### Main page ###
+![Alt text](pics/TweetSamplerUI1.jpg?raw=true "Flow")
+
+### User profile ###
+![Alt text](pics/TweetSamplerUI2.jpg?raw=true "Flow")
