@@ -43,7 +43,7 @@ When code change happens in the github repository it is automatically picked up 
 
 ## Screen shots ##
 ### Main page ###
-![Alt text](pics/TweetSamplerUI1.jpg?raw=true "Flow")
+![Alt text](pics/TweetSamplerUI1.png?raw=true "Flow")
 
 ### User profile ###
-![Alt text](pics/TweetSamplerUI2.jpg?raw=true "Flow")
+![Alt text](pics/TweetSamplerUI2.png?raw=true "Flow")
