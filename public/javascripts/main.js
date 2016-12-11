@@ -99,6 +99,10 @@ angular.module("tweetFilterApp.controllers", []).controller("tweetFilterCtrl", f
         $http.get(jsRoutes.controllers.Users.users(userId).absoluteURL()).
             success(function (user) {
                 aModalInstance.setUser(user);
+            })
+            .error(function(){
+                $log.info('User cannot be loaded: ' + userId);
+                aModalInstance.close();
             });
     };
 });

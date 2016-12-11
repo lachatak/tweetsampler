@@ -4,11 +4,13 @@ import akka.actor._
 import akka.event.LoggingReceive
 import akka.pattern.ask
 import akka.util.Timeout
-import twitter4j.{Status, _}
+import com.danielasfregola.twitter4s.TwitterStreamingClient
+import com.danielasfregola.twitter4s.entities.enums.Language
+import com.danielasfregola.twitter4s.entities.{Tweet => DSTweet}
 
 import scala.concurrent.duration._
 
-class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStream, actorFactory: (ActorRefFactory, Props) => ActorRef) extends Actor with ActorLogging with StatusListener {
+class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStreamingClient, actorFactory: (ActorRefFactory, Props) => ActorRef) extends Actor with ActorLogging {
 
   implicit val timeout: Timeout = 5 second
 
@@ -16,7 +18,6 @@ class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStream,
   val filterStatisticsCalculatorActor = actorFactory(context, StatisticsCalculatorActor.props(client, (filters: List[String], text: String) => filters.filter(f => text.toLowerCase.indexOf(f.trim.toLowerCase) > -1), "filter"))
 
   override def preStart(): Unit = {
-    twitterStreamInstance.addListener(this)
     context watch client
     log.info("Filter actor created!")
   }
@@ -25,36 +26,30 @@ class TwitterFilterActor(client: ActorRef, twitterStreamInstance: TwitterStream,
     case Filter(list) =>
       hashTagStatisticsCalculatorActor ? ClearStats()
       filterStatisticsCalculatorActor ? ClearStats(list)
-      twitterStreamInstance.cleanUp()
-      twitterStreamInstance.filter(new FilterQuery().track(list.toArray).language(Array("en")))
+      twitterStreamInstance.getStatusesFilter(track = list, language = Seq(Language.English)) {
+        case tweet: DSTweet => onStatus(tweet)
+      }
+      //TODO stream clean up?
+    //      twitterStreamInstance.cleanUp()
+    //      twitterStreamInstance.filter(new FilterQuery().track(list.toArray).language(Array("en")))
     case Terminated(_) =>
       log.info("Terminating...")
-      twitterStreamInstance.cleanUp()
-      twitterStreamInstance.shutdown()
+      //TODO stream clean up?
+      //      twitterStreamInstance.cleanUp()
+      //      twitterStreamInstance.shutdown()
       context.stop(self)
   }
 
-  override def onStatus(status: Status): Unit = {
-    val tweet = Tweet(status.getId, status.getCreatedAt.getTime, status.getUser, status.getText)
+  private def onStatus(status: DSTweet): Unit = {
+    //TODO .get is not nice in user
+    val tweet = Tweet(status.id, status.created_at.getTime, status.user.get, status.text)
     client ! tweet
     hashTagStatisticsCalculatorActor ! tweet
     filterStatisticsCalculatorActor ! tweet
   }
 
-  override def onStallWarning(stallWarning: StallWarning): Unit = {}
-
-  override def onDeletionNotice(statusDeletionNotice: StatusDeletionNotice): Unit = {}
-
-  override def onScrubGeo(l: Long, l1: Long): Unit = {}
-
-  override def onTrackLimitationNotice(i: Int): Unit = {}
-
-  def onException(ex: Exception) {
-    log.error(ex, "ERROR")
-  }
-
 }
 
 object TwitterFilterActor {
-  def props(client: ActorRef, twitterStreamInstance: TwitterStream, actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => actorRefFactory.actorOf(props)) = Props(classOf[TwitterFilterActor], client, twitterStreamInstance, actorFactory)
+  def props(client: ActorRef, twitterStreamInstance: TwitterStreamingClient, actorFactory: (ActorRefFactory, Props) => ActorRef = (actorRefFactory, props) => actorRefFactory.actorOf(props)) = Props(classOf[TwitterFilterActor], client, twitterStreamInstance, actorFactory)
 }

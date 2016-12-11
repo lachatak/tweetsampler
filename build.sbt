@@ -14,7 +14,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % "7.1.1",
-  "org.twitter4j" % "twitter4j-stream" % "4.0.3",
+  "com.danielasfregola" %% "twitter4s" % "2.2-SNAPSHOT",
   "com.typesafe.akka" %% "akka-actor" % "2.3.4",
   "com.typesafe.akka" %% "akka-slf4j" % "2.3.4",
   "joda-time" % "joda-time" % "2.7",

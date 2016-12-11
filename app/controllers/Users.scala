@@ -3,10 +3,10 @@ package controllers
 import actors.UserProfileActor
 import akka.pattern.ask
 import akka.util.Timeout
+import com.danielasfregola.twitter4s.entities.User
 import play.api.libs.json.{DefaultWrites, Json, Writes}
 import play.api.mvc.{Action, Controller}
 import play.libs.Akka
-import twitter4j.User
 import util.TwitterClient
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,14 +21,14 @@ object Users extends Controller {
 
   implicit object UserWriter extends Writes[User] with DefaultWrites {
     def writes(user: User) = Json.obj(
-      "id" -> user.getId,
-      "screenName" -> user.getScreenName,
-      "name" -> user.getName,
-      "biggerProfileImageURL" -> user.getBiggerProfileImageURL,
-      "followersCount" -> user.getFollowersCount,
-      "favouritesCount" -> user.getFavouritesCount,
-      "friendsCount" -> user.getFriendsCount,
-      "createdAt" -> user.getCreatedAt
+      "id" -> user.id,
+      "screenName" -> user.screen_name,
+      "name" -> user.name,
+      "profileImageURL" -> user.profile_image_url.replaceAll("_normal", ""),
+      "followersCount" -> user.followers_count,
+      "favouritesCount" -> user.favourites_count,
+      "friendsCount" -> user.friends_count,
+      "createdAt" -> user.created_at
     )
   }
 
